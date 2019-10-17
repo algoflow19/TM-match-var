@@ -28,7 +28,7 @@ class textCNN(nn.Module):
     self.l1_convs=nn.ModuleList([nn.Conv1d(embedding_size,l1_channels_num,i) for i in self.filter_sizes] )
     self.pools=nn.ModuleList([nn.MaxPool1d(i[0],stride=i[1]) for i in self.pool_sizes])
     self.l2_convs=nn.ModuleList([nn.Conv1d(l1_channels_num,l2_channels_num,i) for i in self.filter_sizes2])
-    self.dropout = nn.Dropout(0.1)
+    self.dropout = nn.Dropout(0.32)
     self.fc=nn.Linear(len(self.filter_sizes2)*l2_channels_num,cls_num)
     
 #    self.pool3=nn.MaxPool1d(3,3)

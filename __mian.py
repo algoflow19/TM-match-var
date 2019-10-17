@@ -23,7 +23,7 @@ def main():
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
   parser.add_argument('--max_epoch',default=5,type=int)
-  parser.add_argument('--lr',default=0.0008,type=float)
+  parser.add_argument('--lr',default=0.001,type=float)
   parser.add_argument('--device',default='cpu',type=str,help='Please assign it with cpu or cuda:0')
   parser.add_argument('--batch_size',default=128,type=int)
   parser.add_argument('--embedding_size',default=200,type=int)
@@ -101,7 +101,6 @@ def train(args):
       sum_loss=0
       accuary,F1=test(args,model,dev_dataset,cls_embed,args.cls_num,device)
       if(model.lastScore<F1):
-        print("F1 score grow from {0} to {1}, save model...".format(model.lastScore,F1))
         model.lastScore=F1
         torch.save(model.state_dict(),args.model_save_path)
         torch.save(cls_embed,args.embedding_save_path)
@@ -115,11 +114,10 @@ def calcuate_scores(outputs,labels,cls_num):
 #  print(type(labels))
   assert(len(outputs)==len(labels))
   for i in range(len(outputs)):
-#    print("Model predict: {0},Labels: {1}".format(outputs[i],labels[i]))
-    cls_tTum[outputs[i]]+=1
-    cls_tNum[labels[i]]+=1
+    cls_tTum[outputs[i]-1]+=1
+    cls_tNum[labels[i]-1]+=1
     if(outputs[i]==labels[i]):
-      cls_tAum[outputs[i]]+=1
+      cls_tAum[outputs[i]-1]+=1
   P=cls_tAum/cls_tTum
   R=cls_tAum/cls_tNum
 #  print(P)
@@ -140,7 +138,7 @@ def test(args,model,dataSet,cls_embed,cls_num,device):
     example,stop=dataSet.getTestBatch()
     to_in=cls_embed(example[0],device)
     to_in=model(to_in)
-    result_list.extend((torch.argmax(to_in,-1).cpu()).tolist())
+    result_list.append(torch.argmax(to_in,-1).item()+1)
     label_list.extend(example[1])
     if(stop): break
   accuary,f1=calcuate_scores(result_list,label_list,cls_num)

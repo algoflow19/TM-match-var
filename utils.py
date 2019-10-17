@@ -87,7 +87,7 @@ class DataSet():
     
     This class read corpus file and dircetly produce batch input tensor for our model.
   """
-  def __init__(self,src_file,tgt_file=None,batch_size=32,maxSenLen=2560,wantLine=2):
+  def __init__(self,src_file,tgt_file=None,batch_size=32,maxSenLen=3072,wantLine=2):
     self.batch_size=batch_size
     self.maxSenLen=maxSenLen
     self.src_file=src_file
@@ -117,7 +117,7 @@ class DataSet():
       self.tgt_batchs=[0]*self.dataset_size
       print('loading labels...')
       for i in range(0,self.dataset_size):
-        self.tgt_batchs[i]=int(tgt.readline().split(',')[1])
+        self.tgt_batchs[i]=int(tgt.readline().split(',')[1])-1
 #        if(self.tgt_batchs[i][-1]=='\n'): self.tgt_batchs[-1].pop()
       print('Done label loading.')
 #      tgt_batchs=np.asarray(tgt_batchs,dtype='int')
@@ -143,11 +143,12 @@ class DataSet():
   def getTestBatch(self):
     count=0
     minlen=maxlen=len(self.train_batchs[self.indic])
-    example=([self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]])
+    example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
     while(True):
+      if(count>=self.batch_size or self.indic>=self.dataset_size): break
       maxlen=max(len(self.train_batchs[self.indic]),maxlen)
-      if(maxlen>2*minlen or count>=self.batch_size or self.indic>=self.dataset_size): break
+      if(maxlen> 2*minlen): break
       count+=1
       example[0].append(self.train_batchs[self.indic])
       example[1].append(self.tgt_batchs[self.indic])
@@ -156,7 +157,7 @@ class DataSet():
     stop=False
     if(self.indic>=self.dataset_size):
       self.indic=0
-      stop=True        
+      stop=True
     return example,stop
     
       
@@ -194,7 +195,7 @@ class DataSet():
       num+=1
       x_result.append(x_line.split(',')[wantLine].split(' '))
       if(x_result[-1][-1]=='\n'): x_result[-1].pop()
-      y_result.append(int(y.readline().split(',')[1]))
+      y_result.append(int(y.readline().split(',')[1])-1)
     x.close()
     y.close()
     return x_result,y_result,num
