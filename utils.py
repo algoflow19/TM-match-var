@@ -155,7 +155,7 @@ class DataSet():
     example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
     print("The example idx:{0}, its length:{1}".format(self.indic,minlen))
-    batch_size= self.batch_size if minlen<=1e4 else 32
+    batch_size= min(6e5//minlen,1024)
     while(True):
       if(count>=batch_size or self.indic>=self.dataset_size): break
       maxlen=max(len(self.train_batchs[self.indic]),maxlen)
