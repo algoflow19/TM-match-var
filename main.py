@@ -23,7 +23,7 @@ def main():
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
   parser.add_argument('--max_epoch',default=8,type=int)
-  parser.add_argument('--lr',default=0.0008,type=float)
+  parser.add_argument('--lr',default=0.001,type=float)
   parser.add_argument('--device',default='cpu',type=str,help='Please assign it with cpu or cuda:0')
   parser.add_argument('--batch_size',default=128,type=int)
   parser.add_argument('--embedding_size',default=200,type=int)
@@ -32,6 +32,8 @@ def main():
   parser.add_argument('--model_save_path',default='../save_model/model.bin',type=str)
   parser.add_argument('--embedding_save_path',default='../save_model/embed.bin',type=str)
   parser.add_argument('--predict_writeto',default='../predict_reslt.txt',type=str)
+  parser.add_argument('--lr_decay',default=0.25,type=float)
+  parser.add_argument('--use_cos_batch',default=True,type=bool)
 #  parser.add_argument('--cls_num',default=27,type=int) 
   args = parser.parse_args()
   
@@ -64,8 +66,14 @@ def train(args):
   epoch=0
   sum_loss=0
   step=0
+  tot_step=0
+  first_round=True
+  pi_2=np.pi/2
   while(True):
     optimizer.zero_grad()
+    if(not first_round):
+      for param_group in optimizer.param_groups:
+        param_group['lr'] = args.lr*np.cos(pi_2*(step/tot_step))
     t,l,p=train_data.getTrainBatch()
     l=torch.tensor(l,device=device)
 #    print("Doing word embed")
@@ -97,6 +105,8 @@ def train(args):
 #    print("Done Step!")
 #    print('Current Batch Loss:{0}'.format(loss))
     if(p):
+      first_round=False
+      tot_step=step
       epoch+=p
       print("Epoch mean Loss:{0}".format(sum_loss/step))
       step=0
@@ -107,6 +117,10 @@ def train(args):
         model.lastScore=F1
         torch.save(model.state_dict(),args.model_save_path)
         torch.save(cls_embed,args.embedding_save_path)
+      else:
+        args.lr = args.lr * args.lr_decay
+        for param_group in optimizer.param_groups:
+          param_group['lr'] = args.lr
     if(epoch==args.max_epoch): break
   
 def calcuate_scores(outputs,labels,cls_num):
