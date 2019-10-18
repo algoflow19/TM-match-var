@@ -187,7 +187,7 @@ def predict(args):
   while(True):
     example,p=dev_dataset.getPredictBatch()
     example=cls_embed(example,device=device)
-    print(example.size())
+#    print(example.size())
     out=model(example)
     out=torch.argmax(out,-1).item()+1
     towrite.write("{0},{1}\n".format(idx,out))
