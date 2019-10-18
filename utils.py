@@ -112,7 +112,7 @@ class DataSet():
       if(line==''): break
       self.dataset_size+=1
       self.train_batchs.append(line.split(',')[wantLine].split(' ')[:maxSenLen])
-      if(self.train_batchs[-1][-1]=='\n'): self.train_batchs[-1].pop()
+      if(self.train_batchs[-1][-1][-2:]=='\n'): self.train_batchs[-1][-1]=self.train_batchs[-1][-1][:-2]
     print('Done loading.')
     src.close()
 #    train_batchs=np.asarray(train_batchs,dtype='float32')
@@ -175,6 +175,7 @@ class DataSet():
     self.indic+=1
     p=False
     if(self.indic>=self.dataset_size): p=True
+    print(example)
     return example,p
       
   def padtoMaxLen(self,maxLen=None,DoPad=True): # pad all senten to max Len.
