@@ -154,7 +154,7 @@ class DataSet():
     fobidlen=minlen+1000
     example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
-    print(self.indic)
+    print("The example idx:{0}, its length:{1}".format(self.indic,minlen))
     batch_size= self.batch_size if minlen<=1e4 else 32
     while(True):
       if(count>=batch_size or self.indic>=self.dataset_size): break
