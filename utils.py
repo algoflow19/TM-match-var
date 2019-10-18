@@ -174,9 +174,7 @@ class DataSet():
     example=[self.train_batchs[self.indic]]
     self.indic+=1
     p=False
-    print(example)
     if(self.indic>=self.dataset_size): p=True
-    print(example)
     return example,p
       
   def padtoMaxLen(self,maxLen=None,DoPad=True): # pad all senten to max Len.
