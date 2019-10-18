@@ -19,10 +19,10 @@ def main():
   parser.add_argument('--train_labels', default='../new_train_labels.csv', type=str)
   parser.add_argument('--dev_data', default='../dev_data.csv', type=str)
   parser.add_argument('--dev_labels', default='../dev_labels.csv', type=str)
-  parser.add_argument('--test_data', default='../test_data.csv', type=str)
+  parser.add_argument('--predict_data', default='../test_data.csv', type=str)
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
-  parser.add_argument('--max_epoch',default=5,type=int)
+  parser.add_argument('--max_epoch',default=8,type=int)
   parser.add_argument('--lr',default=0.0008,type=float)
   parser.add_argument('--device',default='cpu',type=str,help='Please assign it with cpu or cuda:0')
   parser.add_argument('--batch_size',default=128,type=int)
@@ -158,7 +158,7 @@ def predict(args):
   model.eval()
   model=model.to(device)
   cls_embed.to(device)
-  dev_dataset=DataSet(args.dev_data,None,args.batch_size)
+  dev_dataset=DataSet(args.predict_data,None,args.batch_size)
   towrite=open(args.predict_writeto,"w+")
   towrite.write("idx,labels\n")
   idx=0
