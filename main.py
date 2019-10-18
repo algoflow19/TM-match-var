@@ -32,8 +32,8 @@ def main():
   parser.add_argument('--model_save_path',default='../save_model/model.bin',type=str)
   parser.add_argument('--embedding_save_path',default='../save_model/embed.bin',type=str)
   parser.add_argument('--predict_writeto',default='../predict_reslt.txt',type=str)
-  parser.add_argument('--lr_decay',default=0.25,type=float)
-  parser.add_argument('--use_cos_batch',default=True,type=bool)
+  parser.add_argument('--lr_decay',default=-0.4,type=float)
+  parser.add_argument('--use_cos_batch',default=False,type=bool)
 #  parser.add_argument('--cls_num',default=27,type=int) 
   args = parser.parse_args()
   
@@ -48,11 +48,12 @@ def main():
 def train(args):
   device=torch.device(args.device)
   cls_embed=ModelEmbeddings.load_from_file(args.pretrain_vector)
-  train_data=DataSet(args.train_data,args.train_labels,args.batch_size)
-  train_data.padtoMaxLen()
+  train_data=DataSet(args.train_data,args.train_labels,args.batch_size,1e9)
+  train_data.reorderForEval()
+#  train_data.padtoMaxLen()
   print('loading dev set...')
 #  devSet,devlabels,devNum=DataSet.load_devSet(args.dev_data,args.dev_labels)
-  dev_dataset=DataSet(args.dev_data,args.dev_labels,args.batch_size)
+  dev_dataset=DataSet(args.dev_data,args.dev_labels,args.batch_size,1e9)
   dev_dataset.reorderForEval()
   print('Done dev loading.')
   model=textCNN(args.embedding_size,args.cls_num,args.l1_channels_num)
@@ -70,10 +71,14 @@ def train(args):
   pi_2=np.pi/2
   while(True):
     optimizer.zero_grad()
-    if(epoch):
+    if(args.use_cos_batch and epoch):
       for param_group in optimizer.param_groups:
         param_group['lr'] = args.lr*np.cos(pi_2*(step/tot_step))
-    t,l,p=train_data.getTrainBatch()
+    
+    example,p=train_data.getTestBatch()
+    t=example[0]
+    l=example[1]
+    example=None
     l=torch.tensor(l,device=device)
 #    print("Doing word embed")
 #    print(type(t))
@@ -115,8 +120,11 @@ def train(args):
         model.lastScore=F1
         torch.save(model.state_dict(),args.model_save_path)
         torch.save(cls_embed,args.embedding_save_path)
+        args.lr = args.lr * np.exp(args.lr_decay)
+        for param_group in optimizer.param_groups:
+          param_group['lr'] = args.lr
       else:
-        args.lr = args.lr * args.lr_decay
+        args.lr = args.lr/2
         for param_group in optimizer.param_groups:
           param_group['lr'] = args.lr
     if(epoch==args.max_epoch): break
