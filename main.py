@@ -25,7 +25,7 @@ def main():
   parser.add_argument('--max_epoch',default=8,type=int)
   parser.add_argument('--lr',default=0.001,type=float)
   parser.add_argument('--device',default='cpu',type=str,help='Please assign it with cpu or cuda:0')
-  parser.add_argument('--batch_size',default=256,type=int)
+  parser.add_argument('--batch_size',default=128,type=int)
   parser.add_argument('--embedding_size',default=200,type=int)
   parser.add_argument('--cls_num',default=27,type=int)
   parser.add_argument('--l1_channels_num',default=100,type=int)
