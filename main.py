@@ -31,13 +31,14 @@ def main():
   parser.add_argument('--l1_channels_num',default=100,type=int)
   parser.add_argument('--model_save_path',default='../save_model/model.bin',type=str)
   parser.add_argument('--embedding_save_path',default='../save_model/embed.bin',type=str)
+  parser.add_argument('--predict_writeto',default='../predict_reslt.txt',type=str)
 #  parser.add_argument('--cls_num',default=27,type=int) 
   args = parser.parse_args()
   
   if(args.mode=='train'):
     train(args)
-  elif(args.mode=='test'):
-    test(args)
+  elif(args.mode=='predict'):
+    predict(args)
   else:
     print('You must choose if you want to train or test the model.')
   return 0
@@ -48,7 +49,9 @@ def train(args):
   train_data=DataSet(args.train_data,args.train_labels,args.batch_size)
   train_data.padtoMaxLen()
   print('loading dev set...')
-  devSet,devlabels,devNum=DataSet.load_devSet(args.dev_data,args.dev_labels)
+#  devSet,devlabels,devNum=DataSet.load_devSet(args.dev_data,args.dev_labels)
+  dev_dataset=DataSet(args.dev_data,args.dev_labels,args.batch_size)
+  dev_dataset.reorderForEval()
   print('Done dev loading.')
   model=textCNN(args.embedding_size,args.cls_num,args.l1_channels_num)
   model.train()
@@ -56,7 +59,6 @@ def train(args):
   cls_embed=cls_embed.to(device)
   optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
   Loss_fun=torch.nn.CrossEntropyLoss()
-  dev_dataset=DataSet(args.dev_data,args.dev_labels,args.batch_size)
   
   print('begin Maximum Likelihood training')
   epoch=0
@@ -148,6 +150,31 @@ def test(args,model,dataSet,cls_embed,cls_num,device):
   model.train()
   return accuary,f1
 
+def predict(args):
+  device=torch.device(args.device)
+  cls_embed=torch.load(args.embedding_save_path)
+  model=textCNN(args.embedding_size,args.cls_num,args.l1_channels_num)
+  model.load_state_dict(args.model_save_path)
+  model.eval()
+  model=model.to(device)
+  cls_embed.to(device)
+  dev_dataset=DataSet(args.dev_data,None,args.batch_size)
+  towrite=open(args.predict_writeto,"w+")
+  towrite.write("idx,labels\n")
+  idx=0
+  print("Begin Predict task...")
+  while(True):
+    example,p=dev_dataset.getPredictBatch()
+    example=cls_embed(example)
+    out=model(example)
+    out=torch.argmax(-1).item()+1
+    towrite.write("{0},{1}\n".format(idx,out))
+    idx+=1
+    if(p): break
+  towrite.close()
+  print("Predict task Done!")
+    
+    
 #embed_size=5
 #cls_num=3
 #l1_channels=4

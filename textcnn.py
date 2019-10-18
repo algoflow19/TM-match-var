@@ -15,7 +15,7 @@ class textCNN(nn.Module):
   """
     Augment version for textCNN, we use two layers CNN network for long and short depend relation.
   """
-  def __init__(self,embedding_size,cls_num,l1_channels_num=64,l2_channels_num=128):
+  def __init__(self,embedding_size,cls_num,l1_channels_num=64,l2_channels_num=128,dropout_rate=0.4):
     super(textCNN,self).__init__()
     self.filter_sizes=[2,3,4]
     self.filter_sizes2=[3,4,2]
@@ -28,7 +28,7 @@ class textCNN(nn.Module):
     self.l1_convs=nn.ModuleList([nn.Conv1d(embedding_size,l1_channels_num,i) for i in self.filter_sizes] )
     self.pools=nn.ModuleList([nn.MaxPool1d(i[0],stride=i[1]) for i in self.pool_sizes])
     self.l2_convs=nn.ModuleList([nn.Conv1d(l1_channels_num,l2_channels_num,i) for i in self.filter_sizes2])
-    self.dropout = nn.Dropout(0.32)
+    self.dropout = nn.Dropout(dropout_rate)
     self.fc=nn.Linear(len(self.filter_sizes2)*l2_channels_num,cls_num)
     
 #    self.pool3=nn.MaxPool1d(3,3)

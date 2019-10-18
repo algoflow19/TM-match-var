@@ -109,8 +109,9 @@ class DataSet():
       if(line==''): break
       self.dataset_size+=1
       self.train_batchs.append(line.split(',')[wantLine].split(' ')[:maxSenLen])
-      if(self.train_batchs[-1][-1]=='\n'): self.train_batchs[i].pop()
+      if(self.train_batchs[-1][-1]=='\n'): self.train_batchs[-1].pop()
     print('Done loading.')
+    src.close()
 #    train_batchs=np.asarray(train_batchs,dtype='float32')
 #    train_batchs=torch.from_numpy(train_batchs)
     if(tgt):
@@ -120,6 +121,8 @@ class DataSet():
         self.tgt_batchs[i]=int(tgt.readline().split(',')[1])-1
 #        if(self.tgt_batchs[i][-1]=='\n'): self.tgt_batchs[-1].pop()
       print('Done label loading.')
+      tgt.close()
+    
 #      tgt_batchs=np.asarray(tgt_batchs,dtype='int')
 #      tgt_batchs=torch.from_numpy(tgt_batchs)
     
@@ -139,6 +142,7 @@ class DataSet():
   def reorderForEval(self):
     whole=zip(self.train_batchs,self.tgt_batchs)
     whole.sort(lambda x:len(x[0]))
+    self.train_batchs,self.tgt_batchs=zip(*whole)
     
   def getTestBatch(self):
     count=0
@@ -159,7 +163,12 @@ class DataSet():
       self.indic=0
       stop=True
     return example,stop
-    
+  def getPredictBatch(self):
+    example=[self.train_batchs[self.indic]]
+    self.indic+=1
+    p=False
+    if(self.indic>=self.dataset_size): p=True
+    return example,p
       
   def padtoMaxLen(self,maxLen=None,DoPad=True): # pad all senten to max Len.
     """
