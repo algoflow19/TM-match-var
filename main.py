@@ -19,7 +19,7 @@ def main():
   parser.add_argument('--train_labels', default='../new_train_labels.csv', type=str)
   parser.add_argument('--dev_data', default='../dev_data.csv', type=str)
   parser.add_argument('--dev_labels', default='../dev_labels.csv', type=str)
-  parser.add_argument('--predict_data', default='../dav_data.csv', type=str)
+  parser.add_argument('--predict_data', default='../test_data.csv', type=str)
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
   parser.add_argument('--max_epoch',default=8,type=int)
@@ -42,7 +42,7 @@ def main():
   elif(args.mode=='predict'):
     predict(args)
   else:
-    print('You must choose if you want to train or test the model.')
+    print('You must choose if you want to train or predict.')
   return 0
 
 def train(args):
@@ -67,11 +67,10 @@ def train(args):
   sum_loss=0
   step=0
   tot_step=0
-  first_round=True
   pi_2=np.pi/2
   while(True):
     optimizer.zero_grad()
-    if(not first_round):
+    if(epoch):
       for param_group in optimizer.param_groups:
         param_group['lr'] = args.lr*np.cos(pi_2*(step/tot_step))
     t,l,p=train_data.getTrainBatch()
@@ -105,7 +104,6 @@ def train(args):
 #    print("Done Step!")
 #    print('Current Batch Loss:{0}'.format(loss))
     if(p):
-      first_round=False
       tot_step=step
       epoch+=p
       print("Epoch mean Loss:{0}".format(sum_loss/step))
@@ -168,7 +166,7 @@ def predict(args):
   device=torch.device(args.device)
   cls_embed=torch.load(args.embedding_save_path)
   model=textCNN(args.embedding_size,args.cls_num,args.l1_channels_num)
-  model.load_state_dict(args.model_save_path)
+  model.load_state_dict(torch.load(args.model_save_path))
   model.eval()
   model=model.to(device)
   cls_embed.to(device)
@@ -179,9 +177,9 @@ def predict(args):
   print("Begin Predict task...")
   while(True):
     example,p=dev_dataset.getPredictBatch()
-    example=cls_embed(example)
+    example=cls_embed(example,device=device)
     out=model(example)
-    out=torch.argmax(-1).item()+1
+    out=torch.argmax(out,-1).item()+1
     towrite.write("{0},{1}\n".format(idx,out))
     idx+=1
     if(p): break
