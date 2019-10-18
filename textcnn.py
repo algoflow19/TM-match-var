@@ -15,7 +15,7 @@ class textCNN(nn.Module):
   """
     Augment version for textCNN, we use two layers CNN network for long and short depend relation.
   """
-  def __init__(self,embedding_size,cls_num,l1_channels_num=64,l2_channels_num=128,dropout_rate=0.4):
+  def __init__(self,embedding_size,cls_num,l1_channels_num=64,l2_channels_num=128,dropout_rate=0.435):
     super(textCNN,self).__init__()
     self.filter_sizes=[2,3,4]
     self.filter_sizes2=[3,4,2]

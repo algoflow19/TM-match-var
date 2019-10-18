@@ -32,7 +32,7 @@ def main():
   parser.add_argument('--model_save_path',default='../save_model/model.bin',type=str)
   parser.add_argument('--embedding_save_path',default='../save_model/embed.bin',type=str)
   parser.add_argument('--predict_writeto',default='../predict_reslt.txt',type=str)
-  parser.add_argument('--lr_decay',default=-0.4,type=float)
+  parser.add_argument('--lr_decay',default=-0.33,type=float)
   parser.add_argument('--use_cos_batch',default=False,type=bool)
 #  parser.add_argument('--cls_num',default=27,type=int) 
   args = parser.parse_args()
@@ -61,7 +61,7 @@ def train(args):
   model = model.to(device)
   cls_embed=cls_embed.to(device)
   optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
-  Loss_fun=torch.nn.CrossEntropyLoss()
+  Loss_fun=torch.nn.CrossEntropyLoss(reduction='sum')
   
   print('begin Maximum Likelihood training')
   epoch=0
@@ -99,7 +99,7 @@ def train(args):
 #    print(outPuts)
     loss=Loss_fun(outPuts,l)
     sum_loss+=loss
-    print("epoch:{0},step:{1},train loss:{2}".format(epoch,step,loss))
+    print("epoch:{0},step:{1},train loss:{2}".format(epoch,step,loss/len(outPuts))
     step+=1
 #    print("Doing backPro")
     loss.backward()
