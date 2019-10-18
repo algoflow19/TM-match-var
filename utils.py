@@ -20,9 +20,9 @@ def EDA_len(corpus_file,__maxLen__=20):
   print(y)
 #  return y
 #
-#y=[188962, 77983, 20933, 6332, 2274, 1124, 678, 450, 354, 239, 174, 109, 102, 64, 43, 36, 19, 13, 6, 12, 7, 1, 4, 7,
-#   2, 2, 0, 2, 4, 1, 0, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-#   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+y=[188962, 77983, 20933, 6332, 2274, 1124, 678, 450, 354, 239, 174, 109, 102, 64, 43, 36, 19, 13, 6, 12, 7, 1, 4, 7,
+   2, 2, 0, 2, 4, 1, 0, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
 def EDA_cls(labels_file,cls_num=28):
@@ -147,12 +147,13 @@ class DataSet():
   def getTestBatch(self):
     count=0
     minlen=maxlen=len(self.train_batchs[self.indic])
+    fobidlen=min(2*minlen,minlen+1000)
     example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
     while(True):
       if(count>=self.batch_size or self.indic>=self.dataset_size): break
       maxlen=max(len(self.train_batchs[self.indic]),maxlen)
-      if(maxlen> 2*minlen): break
+      if(maxlen> fobidlen): break
       count+=1
       example[0].append(self.train_batchs[self.indic])
       example[1].append(self.tgt_batchs[self.indic])
