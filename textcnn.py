@@ -39,7 +39,7 @@ class textCNN(nn.Module):
       input_tensor: shape(batch,maxLenSen,embed_size)
     """
     input_tensor=input_tensor.permute(0,2,1).contiguous()
-    l1_outs=[conv(input_tensor) for conv in self.l1_convs]
+    l1_outs=[torch.relu(conv(input_tensor)) for conv in self.l1_convs]
     l2_outs=[  self.l2_convs[i](self.pools[i](l1_outs[i]))  for i in range(len(self.filter_sizes2))]
     l2_outs=[torch.max(out,2)[0] for out in l2_outs]
     l2_outs=self.dropout(torch.cat(l2_outs,1))
