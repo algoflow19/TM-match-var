@@ -174,6 +174,7 @@ class DataSet():
     example=[self.train_batchs[self.indic]]
     self.indic+=1
     p=False
+    print(example)
     if(self.indic>=self.dataset_size): p=True
     return example,p
       
