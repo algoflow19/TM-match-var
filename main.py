@@ -177,7 +177,8 @@ def predict(args):
   model.load_state_dict(torch.load(args.model_save_path))
   model.eval()
   model=model.to(device)
-  cls_embed.to(device)
+  cls_embed=cls_embed.to(device)
+  cls_embed.eval()
   dev_dataset=DataSet(args.predict_data,None,args.batch_size)
   towrite=open(args.predict_writeto,"w+")
   towrite.write("idx,labels\n")
@@ -186,8 +187,8 @@ def predict(args):
   while(True):
     example,p=dev_dataset.getPredictBatch()
     example=cls_embed(example,device=device)
-    out=model(example)
     print(example.size())
+    out=model(example)
     out=torch.argmax(out,-1).item()+1
     towrite.write("{0},{1}\n".format(idx,out))
     idx+=1

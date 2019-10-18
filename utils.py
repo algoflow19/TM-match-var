@@ -171,11 +171,13 @@ class DataSet():
       stop=True
     return example,stop
   def getPredictBatch(self):
-    example=[self.train_batchs[self.indic]]
+    example=self.train_batchs[self.indic]
+    if(len(example)<16):
+      example+=['<pad>']*(16-len(example))
     self.indic+=1
     p=False
     if(self.indic>=self.dataset_size): p=True
-    return example,p
+    return [example],p
       
   def padtoMaxLen(self,maxLen=None,DoPad=True): # pad all senten to max Len.
     """

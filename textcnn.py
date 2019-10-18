@@ -48,11 +48,11 @@ class textCNN(nn.Module):
     return self.fc(l2_outs)
   
 
-# Mini Test
-batch=64
-l=500
-embed=200
-c=27
-a=torch.rand(batch,l,embed)
-tc=textCNN(embed,c)
-out=tc(a)
+## Mini Test
+#batch=1
+#l=500
+#embed=200
+#c=27
+#i=torch.rand(1,317,200)
+#con=textCNN(embed,27)
+#o=con(i)
