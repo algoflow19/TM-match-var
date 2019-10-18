@@ -19,7 +19,7 @@ def main():
   parser.add_argument('--train_labels', default='../new_train_labels.csv', type=str)
   parser.add_argument('--dev_data', default='../dev_data.csv', type=str)
   parser.add_argument('--dev_labels', default='../dev_labels.csv', type=str)
-  parser.add_argument('--predict_data', default='../test_data.csv', type=str)
+  parser.add_argument('--predict_data', default='../dav_data.csv', type=str)
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
   parser.add_argument('--max_epoch',default=8,type=int)
