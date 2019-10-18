@@ -19,11 +19,14 @@ def EDA_len(corpus_file,__maxLen__=20):
   cf.close()
   print(y)
 #  return y
-#
+
 #y=[188962, 77983, 20933, 6332, 2274, 1124, 678, 450, 354, 239, 174, 109, 102, 64, 43, 36, 19, 13, 6, 12, 7, 1, 4, 7,
 #   2, 2, 0, 2, 4, 1, 0, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 #   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+#x=[]
+#for i in range(1,len(y)+1):
+#  x.append(i*y[i-1])
+#print(x)
 
 def EDA_cls(labels_file,cls_num=28):
   y=[0]*cls_num
@@ -151,8 +154,10 @@ class DataSet():
     fobidlen=minlen+1000
     example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
+    print(self.indic)
+    batch_size= self.batch_size if minlen<=1e4 else 32
     while(True):
-      if(count>=self.batch_size or self.indic>=self.dataset_size): break
+      if(count>=batch_size or self.indic>=self.dataset_size): break
       maxlen=max(len(self.train_batchs[self.indic]),maxlen)
       if(maxlen> fobidlen): break
       count+=1
