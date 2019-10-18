@@ -25,7 +25,7 @@ class textCNN(nn.Module):
     self.embedding_size=embedding_size
     self.cls_num=cls_num
     self.lastScore=0
-    self.l1_convs=nn.ModuleList([nn.Conv1d(embedding_size,l1_channels_num,i) for i in self.filter_sizes] )
+    self.l1_convs=nn.ModuleList([torch.relu(nn.Conv1d(embedding_size,l1_channels_num,i)) for i in self.filter_sizes] )
     self.pools=nn.ModuleList([nn.MaxPool1d(i[0],stride=i[1]) for i in self.pool_sizes])
     self.l2_convs=nn.ModuleList([nn.Conv1d(l1_channels_num,l2_channels_num,i) for i in self.filter_sizes2])
     self.dropout = nn.Dropout(dropout_rate)
