@@ -59,6 +59,7 @@ def train(args):
   model=textCNN(args.embedding_size,args.cls_num,args.l1_channels_num)
   model.train()
   model = model.to(device)
+  cls_embed.train()
   cls_embed=cls_embed.to(device)
   optimizer = torch.optim.Adam(model.parameters(), lr=float(args.lr))
   Loss_fun=torch.nn.CrossEntropyLoss(reduction='sum')

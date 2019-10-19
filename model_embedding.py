@@ -55,7 +55,7 @@ class ModelEmbeddings(nn.Module):
     to_read=open(vec_file,'r')
     line=to_read.readline()
     vocab_size,embed_size=np.array(line.split(" "),dtype=int)
-    instance=ModelEmbeddings(vocab_size,embed_size,pad_token_id)
+    instance=ModelEmbeddings(int(vocab_size),int(embed_size),pad_token_id)
     pretrain_weight=torch.zeros(instance.embedding.weight.size())
     while(True):
       line=to_read.readline()
@@ -71,6 +71,7 @@ class ModelEmbeddings(nn.Module):
     return instance
     
 #Mini Test
-#cls_embed=ModelEmbeddings(10,5,0)
-#in_words=[['1','2','3','4']]
-#cls_embed(in_words)
+cls_embed=ModelEmbeddings(10,5,0)
+in_words=[['1','2','3','4']]
+
+print(cls_embed(in_words).size())
