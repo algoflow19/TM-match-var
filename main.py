@@ -22,7 +22,7 @@ def main():
   parser.add_argument('--predict_data', default='../test_data.csv', type=str)
   
   parser.add_argument('--pretrain_vector',default='../totVector.txt',type=str)
-  parser.add_argument('--max_epoch',default=8,type=int)
+  parser.add_argument('--max_epoch',default=15,type=int)
   parser.add_argument('--lr',default=0.0008,type=float)
   parser.add_argument('--device',default='cpu',type=str,help='Please assign it with cpu or cuda:0')
   parser.add_argument('--batch_size',default=1024,type=int)
