@@ -99,14 +99,16 @@ def train(args):
 #    print(l)
 #    print(outPuts)
     loss=Loss_fun(outPuts,l)
+    loss.backward()
+    optimizer.step()
+    loss/=len(outPuts)
     sum_loss+=loss
-    print("epoch:{0},step:{1},train loss:{2}".format(epoch,step,loss/len(outPuts)))
+    print("epoch:{0},step:{1},train loss:{2}".format(epoch,step,loss))
     step+=1
 #    print("Doing backPro")
-    loss.backward()
 #    print("Done backPro")
 #    print("Setping...")
-    optimizer.step()
+    
 #    print("Done Step!")
 #    print('Current Batch Loss:{0}'.format(loss))
     if(p):
