@@ -28,7 +28,7 @@ class ModelEmbeddings(nn.Module):
     self.recurrent_layer=nn.GRU(embed_size,embed_size,num_layers=1,batch_first=True,bidirectional=True)
     self.affine=nn.Linear(2*embed_size,embed_size)
     self.embedding=nn.Embedding(vocab_size+len(self.token2id),embed_size,pad_token_id)
-    
+    self.activation=nn.LeakyReLU(0.24)
     
   def forward(self,batch_data,device=torch.device('cpu')):
     """
