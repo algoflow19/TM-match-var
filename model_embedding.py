@@ -38,7 +38,7 @@ class ModelEmbeddings(nn.Module):
     batch_data=torch.tensor([ [self.token2id.get(j,self.token2id['<unknow>']) for j in i] for i in batch_data],device=device)
 #    print("use {0} seconds for converting batch".format(time.time()-tic))
     
-    return  self.affine(self.recurrent_layer(self.embedding(batch_data)))
+    return  self.affine(self.recurrent_layer(self.embedding(batch_data))[0])
   
 #  def to_input_tensor(batch_data, device):
 #    """
@@ -70,4 +70,7 @@ class ModelEmbeddings(nn.Module):
 #    instance.embedding.weight.require_grad=False
     return instance
     
-    
+#Mini Test
+#cls_embed=ModelEmbeddings(10,5,0)
+#in_words=[['1','2','3','4']]
+#cls_embed(in_words)
