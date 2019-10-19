@@ -74,3 +74,7 @@ class ModelEmbeddings(nn.Module):
 #cls_embed=ModelEmbeddings(10,5,0)
 #in_words=[['1','2','3','4']]
 #cls_embed(in_words)
+#cls_embed=ModelEmbeddings(10,5,0)
+#in_words=[['1','2','3','4']]
+
+#print(cls_embed(in_words).size())
