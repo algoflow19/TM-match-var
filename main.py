@@ -61,7 +61,7 @@ def train(args):
   model = model.to(device)
   cls_embed.train()
   cls_embed=cls_embed.to(device)
-  optimizer = torch.optim.Adam([q], lr=float(args.lr))
+  optimizer = torch.optim.Adam([{'params':model.parameters()},{'params':cls_embed.parameters(),'lr':1.75*args.lr}], lr=float(args.lr))
   Loss_fun=torch.nn.CrossEntropyLoss(reduction='sum')
   
   print('begin Maximum Likelihood training')
