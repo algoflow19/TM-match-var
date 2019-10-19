@@ -143,7 +143,7 @@ class DataSet():
         self.indic=self.batch_size-(self.dataset_size-self.indic)
         return t,l,1
   def reorderForEval(self):
-    whole=list(zip(self.train_batchs,self.tgt_batchs))
+    whole=list(zip(self.train_batchs,self.tgt_batchs if self.tgt_batchs else [None]*len(self.train_batchs)))
     whole.sort(key=lambda x:len(x[0]))
     self.train_batchs,self.tgt_batchs=zip(*whole)
     
@@ -152,7 +152,7 @@ class DataSet():
     minlen=maxlen=len(self.train_batchs[self.indic])
 #    fobidlen=min(2*minlen,minlen+1000)
     fobidlen=minlen+1000
-    example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]] if self.tgt_batchs else None
+    example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
     self.indic+=1
     print("The example idx:{0}, its length:{1}".format(self.indic,minlen))
     batch_size= min(1.2e5//minlen,self.batch_size)
@@ -162,7 +162,7 @@ class DataSet():
       if(maxlen> fobidlen): break
       count+=1
       example[0].append(self.train_batchs[self.indic])
-      example[1].append(self.tgt_batchs[self.indic] if self.tgt_batchs else None)
+      example[1].append(self.tgt_batchs[self.indic] )
       self.indic+=1
     example[0]=[ i+['<pad>']*(maxlen-len(i))  for i in example[0]]
     stop=False
