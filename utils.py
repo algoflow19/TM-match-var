@@ -152,7 +152,7 @@ class DataSet():
     minlen=maxlen=len(self.train_batchs[self.indic])
 #    fobidlen=min(2*minlen,minlen+1000)
     fobidlen=minlen+1000
-    example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]]
+    example=[[self.train_batchs[self.indic]],[self.tgt_batchs[self.indic]]] if self.tgt_batchs else None
     self.indic+=1
     print("The example idx:{0}, its length:{1}".format(self.indic,minlen))
     batch_size= min(1.2e5//minlen,self.batch_size)
@@ -162,7 +162,8 @@ class DataSet():
       if(maxlen> fobidlen): break
       count+=1
       example[0].append(self.train_batchs[self.indic])
-      example[1].append(self.tgt_batchs[self.indic])
+      if(self.tgt_batchs):
+        example[1].append(self.tgt_batchs[self.indic])
       self.indic+=1
     example[0]=[ i+['<pad>']*(maxlen-len(i))  for i in example[0]]
     stop=False
@@ -170,15 +171,18 @@ class DataSet():
       self.indic=0
       stop=True
     return example,stop
-  def getPredictBatch(self):
-    example=self.train_batchs[self.indic]
-    if(len(example)<16):
-      example+=['<pad>']*(16-len(example))
-    self.indic+=1
-    p=False
-    if(self.indic>=self.dataset_size): p=True
-    return [example],p
-      
+  def getPredictBatch(self,useSingleExample=True):
+    if(useSingleExample):
+      example=self.train_batchs[self.indic]
+      if(len(example)<16):
+        example+=['<pad>']*(16-len(example))
+      self.indic+=1
+      p=False
+      if(self.indic>=self.dataset_size): p=True
+      return [example],p
+    else:
+      return self.getTestBatch()
+    
   def padtoMaxLen(self,maxLen=None,DoPad=True): # pad all senten to max Len.
     """
       Repeat the source sentences until maxSenLen, note that we could also pad '<pad>' to the sentences for

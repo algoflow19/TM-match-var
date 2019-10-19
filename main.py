@@ -183,18 +183,20 @@ def predict(args):
   cls_embed=cls_embed.to(device)
   cls_embed.eval()
   dev_dataset=DataSet(args.predict_data,None,args.batch_size)
+  dev_dataset.reorderForEval()
   towrite=open(args.predict_writeto,"w+")
   towrite.write("idx,labels\n")
   idx=0
   print("Begin Predict task...")
   while(True):
-    example,p=dev_dataset.getPredictBatch()
+    (example,dump),p=dev_dataset.getPredictBatch(False)
     example=cls_embed(example,device=device)
 #    print(example.size())
-    out=model(example)
-    out=torch.argmax(out,-1).item()+1
-    towrite.write("{0},{1}\n".format(idx,out))
-    idx+=1
+    outs=model(example)
+    outs=(torch.argmax(outs,-1)+1).squeeze().tolist()
+    for out in outs:
+      towrite.write("{0},{1}\n".format(idx,int(out))) 
+      idx+=1
     if(p): break
   towrite.close()
   print("Predict task Done!")
