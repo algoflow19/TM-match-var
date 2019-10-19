@@ -24,12 +24,12 @@ def readCorpus(output_file,input_file,lineWant):
         print(line+" <-- Read a bad line at:%d, and it is the %d bad line".format(line_count,bad_count))
         continue
       else:
-        output_file.write(l[lineWant+1])
+        output_file.write(l[lineWant])
 #        print(l[2])
 
 
 wantWord=1
-out_file=open('corpus.txt',"w+")
-readCorpus(out_file,'train_data.csv',wantWord)
-readCorpus(out_file,'test_data.csv',wantWord)
+out_file=open('char_corpus.txt',"w+")
+readCorpus(out_file,'../train_data.csv',wantWord)
+readCorpus(out_file,'../test_data.csv',wantWord)
 out_file.close()
