@@ -25,6 +25,8 @@ class ModelEmbeddings(nn.Module):
     self.token2id['<s>']=1
     self.token2id['<unknow>']=2
 #    self.device=device
+    self.recurrent_layer=nn.GRU(embed_size,embed_size,num_layers=2,batch_first=True,bidirectional=True)
+    self.affine=nn.Linear(2*embed_size,embed_size)
     self.embedding=nn.Embedding(vocab_size+len(self.token2id),embed_size,pad_token_id)
     
     
@@ -36,7 +38,7 @@ class ModelEmbeddings(nn.Module):
     batch_data=torch.tensor([ [self.token2id.get(j,self.token2id['<unknow>']) for j in i] for i in batch_data],device=device)
 #    print("use {0} seconds for converting batch".format(time.time()-tic))
     
-    return self.embedding(batch_data)
+    return  self.affine(self.recurrent_layer(self.embedding(batch_data)))
   
 #  def to_input_tensor(batch_data, device):
 #    """
