@@ -162,8 +162,7 @@ class DataSet():
       if(maxlen> fobidlen): break
       count+=1
       example[0].append(self.train_batchs[self.indic])
-      if(self.tgt_batchs):
-        example[1].append(self.tgt_batchs[self.indic])
+      example[1].append(self.tgt_batchs[self.indic] if self.tgt_batchs else None)
       self.indic+=1
     example[0]=[ i+['<pad>']*(maxlen-len(i))  for i in example[0]]
     stop=False
