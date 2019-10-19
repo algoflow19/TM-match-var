@@ -143,7 +143,7 @@ class DataSet():
         self.indic=self.batch_size-(self.dataset_size-self.indic)
         return t,l,1
   def reorderForEval(self):
-    whole=list(zip(self.train_batchs,self.tgt_batchs if self.tgt_batchs else [None]*len(self.train_batchs)))
+    whole=list(zip(self.train_batchs,self.tgt_batchs if self.tgt_batchs else [i for i in range(len(self.train_batchs))]))
     whole.sort(key=lambda x:len(x[0]))
     self.train_batchs,self.tgt_batchs=zip(*whole)
     

@@ -194,8 +194,8 @@ def predict(args):
 #    print(example.size())
     outs=model(example)
     outs=(torch.argmax(outs,-1)+1).squeeze().tolist()
-    for out in outs:
-      towrite.write("{0},{1}\n".format(idx,int(out))) 
+    for out in zip(example[1],outs):
+      towrite.write("{0},{1}\n".format(out[0],int(out[1]))) 
       idx+=1
     if(p): break
   towrite.close()
