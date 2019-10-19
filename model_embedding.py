@@ -25,7 +25,7 @@ class ModelEmbeddings(nn.Module):
     self.token2id['<s>']=1
     self.token2id['<unknow>']=2
 #    self.device=device
-    self.recurrent_layer=nn.GRU(embed_size,embed_size,num_layers=2,batch_first=True,bidirectional=True)
+    self.recurrent_layer=nn.GRU(embed_size,embed_size,num_layers=1,batch_first=True,bidirectional=True)
     self.affine=nn.Linear(2*embed_size,embed_size)
     self.embedding=nn.Embedding(vocab_size+len(self.token2id),embed_size,pad_token_id)
     
@@ -38,7 +38,7 @@ class ModelEmbeddings(nn.Module):
     batch_data=torch.tensor([ [self.token2id.get(j,self.token2id['<unknow>']) for j in i] for i in batch_data],device=device)
 #    print("use {0} seconds for converting batch".format(time.time()-tic))
     
-    return  self.affine(self.recurrent_layer(self.embedding(batch_data))[0])
+    return  self.affine(torch.relu(self.recurrent_layer(self.embedding(batch_data))[0]))
   
 #  def to_input_tensor(batch_data, device):
 #    """
@@ -55,7 +55,7 @@ class ModelEmbeddings(nn.Module):
     to_read=open(vec_file,'r')
     line=to_read.readline()
     vocab_size,embed_size=np.array(line.split(" "),dtype=int)
-    instance=ModelEmbeddings(vocab_size,embed_size,pad_token_id)
+    instance=ModelEmbeddings(int(vocab_size),int(embed_size),pad_token_id)
     pretrain_weight=torch.zeros(instance.embedding.weight.size())
     while(True):
       line=to_read.readline()

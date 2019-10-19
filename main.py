@@ -15,8 +15,8 @@ import numpy as np
 def main():
   parser = argparse.ArgumentParser(description='Text Classification for tinyMind task.')
   parser.add_argument('--mode', type=str, required=True, help='choose a mode: [train,test]')
-  parser.add_argument('--train_data', default='../train_data.csv', type=str)
-  parser.add_argument('--train_labels', default='../train_labels.csv', type=str)
+  parser.add_argument('--train_data', default='../dev_data.csv', type=str)
+  parser.add_argument('--train_labels', default='../dev_labels.csv', type=str)
   parser.add_argument('--dev_data', default='../dev_data.csv', type=str)
   parser.add_argument('--dev_labels', default='../dev_labels.csv', type=str)
   parser.add_argument('--predict_data', default='../test_data.csv', type=str)
